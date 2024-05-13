@@ -38,6 +38,11 @@ class DataHandler:
             except json.JSONDecodeError:
                 print("Error: Invalid JSON syntax.")
 
+    def save_json(self, filename):
+        with open(filename, 'w') as file:
+            json.dump(self.data, file, indent=4)
+        print("Data saved to JSON file successfully.")
+
 
 def main():
     parser = argparse.ArgumentParser(description="Data File Handler")
