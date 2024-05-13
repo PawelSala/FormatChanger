@@ -1,0 +1,32 @@
+name: Format Changer
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.9.13'
+        
+    - name: Install dependencies
+      run: .\installResources.ps1
+        
+    - name: Build executable
+      run: pyinstaller.exe --onefile format_changer.py
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: format_changer 
+        path: dist/
