@@ -52,6 +52,11 @@ class DataHandler:
             except yaml.YAMLError:
                 print("Error: Invalid YAML syntax.")
 
+    def save_yaml(self, filename):
+        with open(filename, 'w') as file:
+            yaml.dump(self.data, file, default_flow_style=False)
+        print("Data saved to YAML file successfully.")
+
 
 def main():
     parser = argparse.ArgumentParser(description="Data File Handler")
