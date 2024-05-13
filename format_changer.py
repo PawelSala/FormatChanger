@@ -2,7 +2,7 @@
 import argparse
 import json
 import yaml
-
+import xmltodict
 
 
 class DataHandler:
@@ -56,6 +56,14 @@ class DataHandler:
         with open(filename, 'w') as file:
             yaml.dump(self.data, file, default_flow_style=False)
         print("Data saved to YAML file successfully.")
+
+    def load_xml(self, filename):
+        with open(filename, 'r') as file:
+            try:
+                self.data = xmltodict.parse(file.read())
+                print("Loaded XML data successfully.")
+            except xmltodict.ExpatError:
+                print("Error: Invalid XML syntax.")
 
 
 def main():
