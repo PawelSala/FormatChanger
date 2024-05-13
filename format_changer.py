@@ -65,6 +65,10 @@ class DataHandler:
             except xmltodict.ExpatError:
                 print("Error: Invalid XML syntax.")
 
+    def save_xml(self, filename):
+        with open(filename, 'w') as file:
+            file.write(xmltodict.unparse(self.data, pretty=True))
+        print("Data saved to XML file successfully.")
 
 def main():
     parser = argparse.ArgumentParser(description="Data File Handler")
