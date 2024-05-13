@@ -1,6 +1,7 @@
 
 import argparse
 import json
+import yaml
 
 
 
@@ -42,6 +43,14 @@ class DataHandler:
         with open(filename, 'w') as file:
             json.dump(self.data, file, indent=4)
         print("Data saved to JSON file successfully.")
+
+    def load_yaml(self, filename):
+        with open(filename, 'r') as file:
+            try:
+                self.data = yaml.safe_load(file)
+                print("Loaded YAML data successfully.")
+            except yaml.YAMLError:
+                print("Error: Invalid YAML syntax.")
 
 
 def main():
