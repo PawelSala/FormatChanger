@@ -3,7 +3,7 @@ from tkinter import messagebox
 import json
 import yaml
 import xmltodict
-
+import threading
 
 class DataHandler:
     def __init__(self):
@@ -62,7 +62,7 @@ class DataHandler:
             try:
                 self.data = xmltodict.parse(file.read())
                 print("Loaded XML data successfully.")
-            except xmltodict.ExpatError:
+            except xmltodict.expat.ExpatError:
                 print("Error: Invalid XML syntax.")
 
     def save_xml(self, filename):
@@ -71,18 +71,34 @@ class DataHandler:
         print("Data saved to XML file successfully.")
 
 def transferuj():
-    entry_file_name = entry_we.get()
-    out_file_name = entry_wy.get()
+    nazwa_pliku_we = entry_we.get()
+    nazwa_pliku_wy = entry_wy.get()
 
     handler = DataHandler()
-    try:
-        handler.load_file(entry_file_name)
-        handler.save_file(out_file_name)
-        messagebox.showinfo("Sukces", "Plik został przetworzony pomyślnie!")
-    except FileNotFoundError:
-        messagebox.showerror("Błąd", f"Plik {entry_file_name} nie został znaleziony.")
-    except Exception as e:
-        messagebox.showerror("Błąd", f"Wystąpił błąd: {e}")
+    load_event = threading.Event()
+
+    def load_worker():
+        try:
+            handler.load_file(nazwa_pliku_we)
+            load_event.set()  # Signal that loading is complete
+        except FileNotFoundError:
+            messagebox.showerror("Błąd", f"Plik {nazwa_pliku_we} nie został znaleziony.")
+        except Exception as e:
+            messagebox.showerror("Błąd", f"Wystąpił błąd: {e}")
+
+    def save_worker():
+        load_event.wait()  # Wait for the loading to complete
+        try:
+            handler.save_file(nazwa_pliku_wy)
+            messagebox.showinfo("Sukces", "Plik został przetworzony pomyślnie!")
+        except Exception as e:
+            messagebox.showerror("Błąd", f"Wystąpił błąd: {e}")
+
+    load_thread = threading.Thread(target=load_worker)
+    save_thread = threading.Thread(target=save_worker)
+    
+    load_thread.start()
+    save_thread.start()
 
 # Tworzenie głównego okna
 root = tk.Tk()
