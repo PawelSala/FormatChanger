@@ -23,7 +23,7 @@ jobs:
       run: .\installResources.ps1
         
     - name: Build executable
-      run: pyinstaller.exe --onefile format_changer.py
+      run: pyinstaller.exe --onefile --noconsole format_changer.py
         
     - name: Upload artifact
       uses: actions/upload-artifact@v3
