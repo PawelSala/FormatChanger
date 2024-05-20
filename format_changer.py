@@ -1,5 +1,5 @@
-
-import argparse
+import tkinter as tk
+from tkinter import messagebox
 import json
 import yaml
 import xmltodict
@@ -70,21 +70,40 @@ class DataHandler:
             file.write(xmltodict.unparse(self.data, pretty=True))
         print("Data saved to XML file successfully.")
 
-def main():
-    parser = argparse.ArgumentParser(description="Data File Handler")
-    parser.add_argument("input_files", nargs=2, help="Input files and formats")
-    args = parser.parse_args()
+def transferuj():
+    entry_file_name = entry_we.get()
+    out_file_name = entry_wy.get()
 
-    input_files = args.input_files
     handler = DataHandler()
+    try:
+        handler.load_file(entry_file_name)
+        handler.save_file(out_file_name)
+        messagebox.showinfo("Sukces", "Plik został przetworzony pomyślnie!")
+    except FileNotFoundError:
+        messagebox.showerror("Błąd", f"Plik {entry_file_name} nie został znaleziony.")
+    except Exception as e:
+        messagebox.showerror("Błąd", f"Wystąpił błąd: {e}")
 
-    filename, file_format = input_files[0].split('.')
-    handler.load_file(filename + '.' + file_format)
+# Tworzenie głównego okna
+root = tk.Tk()
+root.title("Transferuj Plik")
+root.geometry("400x200")
 
-    output_file = input_files[1]
-    handler.save_file(output_file)
+# Etykieta i pole tekstowe dla pliku wejściowego
+label_we = tk.Label(root, text="Nazwa pliku wejściowego:")
+label_we.pack(pady=5)
+entry_we = tk.Entry(root, width=50)
+entry_we.pack(pady=5)
 
+# Etykieta i pole tekstowe dla pliku wyjściowego
+label_wy = tk.Label(root, text="Nazwa pliku wyjściowego:")
+label_wy.pack(pady=5)
+entry_wy = tk.Entry(root, width=50)
+entry_wy.pack(pady=5)
 
+# Tworzenie przycisku "Transferuj"
+transfer_button = tk.Button(root, text="Transferuj", command=transferuj)
+transfer_button.pack(pady=20)
 
-if __name__ == "__main__":
-    main()
+# Uruchomienie głównej pętli
+root.mainloop()
